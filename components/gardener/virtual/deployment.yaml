@@ -56,8 +56,17 @@ plugins:
       - template
     - kubectl:
       - kubectl_apply
+  - tag-resource:
+    - namespace_tags
   - kubectl:
     - garden_secret
+
+namespace_tags:
+  kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
+  type: namespace
+  name: garden
+  annotations:
+    - "namespace.gardener.cloud/keep-after-project-deletion=true"
 
 kubectl_apply:
   kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
