@@ -18,14 +18,22 @@ landscape: (( &temporary ))
 utilities: (( &temporary ))
 
 settings:
-  project_name: core
-  project_namespace: garden-core
+  project_name: garden
+  project_namespace: garden # DO NOT CHANGE
   secret_name_template: (( &template( settings.project_name "-" v.type "-" v.name ) ))
 
 plugins:
-  - kubectl:
-      - core
+  - kubectl: project
+  - tag-resource: namespace_tags
   - shoot-check
+
+namespace_tags:
+  kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
+  type: namespace
+  name: (( .settings.project_namespace ))
+  labels:
+    - "gardener.cloud/role=project"
+    - (( "project.gardener.cloud/name=" .settings.project_name ))
 
 shoot-check:
   kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
@@ -52,16 +60,9 @@ secret_template:
       secretRef:
         name: (( secretname ))
 
-core:
+project:
   kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
   manifests:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        labels:
-          gardener.cloud/role: project
-          project.gardener.cloud/name: (( .settings.project_name ))
-        name: (( .settings.project_namespace ))
     - apiVersion: core.gardener.cloud/v1beta1
       kind: Project
       metadata:
