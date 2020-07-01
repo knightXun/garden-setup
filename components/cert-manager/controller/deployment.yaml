@@ -129,6 +129,8 @@ helm:
   values:
     webhook:
       enabled: false
+    cainjector:
+      enabled: false
     serviceAccount:
       create: true
       name: (( .settings.serviceAccountName ))
