@@ -294,8 +294,7 @@ validation:
           - ["mapfield", "vsphereUsername"]
         config:
           - ["mapfield", "region"]
-          - ["mapfield", "zones", ["list"]]
-        networks: {}
+        networks: []
       openstack:
         credentials:
           - and
