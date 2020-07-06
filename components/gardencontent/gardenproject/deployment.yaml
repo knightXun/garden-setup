@@ -23,17 +23,27 @@ settings:
   secret_name_template: (( &template( settings.project_name "-" v.type "-" v.name ) ))
 
 plugins:
-  - kubectl: project
-  - tag-resource: namespace_tags
+  - pinned:
+    - tag-resource: keep_namespace_annotation
+    - tag-resource: project_labels
+    - kubectl: project
   - shoot-check
 
-namespace_tags:
+project_labels:
   kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
   type: namespace
   name: (( .settings.project_namespace ))
+  step: deploy
   labels:
     - "gardener.cloud/role=project"
     - (( "project.gardener.cloud/name=" .settings.project_name ))
+
+keep_namespace_annotation:
+  kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
+  type: namespace
+  name: (( .settings.project_namespace ))
+  annotations:
+    - "namespace.gardener.cloud/keep-after-project-deletion=true"
 
 shoot-check:
   kubeconfig: (( imports.kube_apiserver.export.kubeconfig ))
